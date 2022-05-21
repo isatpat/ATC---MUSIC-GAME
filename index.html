@@ -1,18 +1,11 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <!-- <meta charset="utf-8"> -->
     <title>Canvas Background through CSS</title>
-   <!--white rectangle with black border and music staff (Sravya)-->
+    <p id ="text"> coordinates will print here </p>
    <style type="text/css" media="screen">
       canvas, img { display:block; width: 1200px; height: 600px; margin:4em auto; border:2px solid black; }
       canvas { background:url(musicstaff.png) }
- 
-    /* <style>
-        body {
-            margin: 0;
-            overflow: none;
-        } */
         h1 {
             margin-top: 0.25em;
             font-size: 70px;
@@ -22,19 +15,25 @@
 </head>
     <h1> ATC Music Game </h1>
 <body>
- 
     </div>
-    <canvas id="canvas" ></canvas>
     <div style="display:none;">
-        <img id="source" src="musicnote.png" width="3" height="3">
+        <img id="source1" src="musicnote_blue.png" width="3" height="3">
+        <img id="source2" src="musicnote_cyan.png" width="3" height="3">
+        <img id="source3" src="musicnote_green.png" width="3" height="3">
+        <img id="source4" src="musicnote_orange.png" width="3" height="3">
+        <img id="source5" src="musicnote_pink.png" width="3" height="3">
+        <img id="source6" src="musicnote_yellow.png" width="3" height="3">
+
     </div>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const image = document.getElementById('source');
-        // document.body.style.background = "url('musicstaff.png')";
-        //maybe also add light grey vertical lines to give an idea of how the x-coord is rounded
-        //where the notes go (SP)
+        const image1 = document.getElementById('source1');
+        const image2 = document.getElementById('source2');
+        const image3 = document.getElementById('source3');
+        const image4 = document.getElementById('source4');
+        const image5 = document.getElementById('source5');
+        const image6 = document.getElementById('source6');
         const coords = [];
  
         canvas.width = window.innerWidth;
@@ -44,107 +43,112 @@
        
         ctx.globalAlpha = 0.5;
         ctx.fillStyle = "#474973";
-        //ctx.fillRect(0, 0, canvas.width, 50);
  
-        // Stores picture color data (not including GUIs)
-        // const imageData = ctx.createImageData(canvas.width, canvas.height);
+        loop(210);
  
-        loop();
-        // initialize the canvas
- 
-        // update the rectangle
-       //moving vertical rectangle (SP)
         function update_rectangle_leftright() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillRect(x - 50, 0, 100, canvas.height);
-            // ctx.fillRect(0, y - 10, canvas.width, 20);
             drawLines();
             ++x;
             x %= canvas.width;
         }
-        //moving horizontal rectangle (SP)
+ 
         function update_rectangle_updown() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillRect(0, y - 70, canvas.width, 140);
+            ctx.fillRect(0, y - 80, canvas.width, 160);
             ctx.fillRect(x - 50, 0, 100, canvas.height);
             drawLines();
             ++y;
             y %= canvas.height;
         }
        
-        // on click --> stop the rectangle from ov ing and print the x and y coordinate
-        // places music note (SP)
         function drawLines() {
             ctx.globalAlpha = 1;
             for(let i = 0; i<coords.length; i++){
-                //ctx.clearRect(0, 0, canvas.width, canvas.height);
-                // ctx.beginPath();
-                // ctx.arc(coords[i].x,coords[i].y,6,0,Math.PI*2   );code for dot instead of music note
-                // ctx.fill();
-                // ctx.closePath();
- 
-                ctx.drawImage(image, coords[i].x - 67, coords[i].y - 67, 135, 135);
+                ctx.drawImage(coords[i].img, coords[i].x - 75, coords[i].y - 75, 150, 150);
             }
- 
-            //ctx.fillStyle = "#474973";
             ctx.globalAlpha = 0.5; //transparency of the lines
         }
-        //start/stopping the rectangle when hitting the spacebar (SP)
-        function loop(){
-            x = 210;
+ 
+        function loop(a){
+            x = a;
             y = 50;
-            // on click stop the loop
+ 
             let continueloop = true;
+ 
             document.addEventListener('keydown', function _listener(e) {
                 if (e.key !== ' ')
                     return;
                 e.preventDefault();  
                 continueloop = false;
                 document.removeEventListener('keydown', _listener, true);
-                
             });
-            //Takes 50 second to move the rectangle or moves it back to the original position (SP)
-            // !!! NEED TO DO !!! --> round the x- and y- coordinates before pushing to array
+ 
             function updateUpDownTimeout() {
                 update_rectangle_updown();
                 if (continueloop) {
-                    setTimeout(updateUpDownTimeout, 10); /////////////////////////////SPEED
+                    setTimeout(updateUpDownTimeout, 7); //SPEED
                 } else {
-                    // We have x and y; end loop
- 
- 
                     coords.push({x: x, y: y});
                     playsound(y);
-                    loop();
+ 
+                    //REMOVE LATER
+                    stringx = x.toString()
+                    stringy = y.toString()
+                    stringxy = "x: " + stringx + " y: " + stringy
+                    document.getElementById('text').innerHTML = stringxy;
+                   
+                   
+                    loop(x);
                 }
             }
  
             function updateLeftRightTimeout() {
                 update_rectangle_leftright();
                 if (continueloop) {
-                    setTimeout(updateLeftRightTimeout, 50);
+                    setTimeout(updateLeftRightTimeout, 7);
                 } else {
                     continueloop = true;
-                    setTimeout(updateUpDownTimeout, 50);
+                    setTimeout(updateUpDownTimeout, 7);
                     document.addEventListener('keydown', function _listener(e) {
                         if (e.key !== ' ')
                             return;
-                            
-                        continueloop = false;
                         e.preventDefault();
-                        //document.getElementById('x_y').innerHTML = x+" "+y;
-                       
                         document.removeEventListener('keydown', _listener, true);
                     })
                 }
             }
-       
-            setTimeout(updateLeftRightTimeout, 50);
-            // timer
-            // call update
-           
+            setTimeout(updateLeftRightTimeout, 7);
         }
- 
+        function randomImage()
+        {
+            const rand = parseInt((Math.random()*(6-1) + 1));
+            if(rand==1)
+            {
+                return image1;
+            }
+            if(rand==2)
+            {
+                return image2;
+            }
+            if(rand==3)
+            {
+                return image3;
+            }
+            if(rand==4)
+            {
+                return image4;
+            }
+            if(rand==5)
+            {
+                return image5;
+            }
+            if(rand==6)
+            {
+                return image6;
+            }
+        }
     </script>
 </body>
 </html>
@@ -160,9 +164,10 @@ Music notes:
 <button id="button2" onclick= "playmusic(2)" >click me for audio 2</button>
 <audio controls src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" id = "audio1" style="display: none;"></audio>
 <audio controls src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" id = "audio2" style="display: none;"></audio>
-<!-- <audio controls src="./sounds/audiochime.mp3" id = "audiosample" style="display: none;"></audio> --> 
+<!-- <audio controls src="./sounds/audiochime.mp3" id = "audiosample" style="display: none;"></audio> -->
 <script>
-   function playmusic(i){    //    (document.getElementById("audio"+String(i))).play(); //on the button click (you can replace this with note addition)
+   function playmusic(i){
+       //(document.getElementById("audio"+String(i))).play(); //on the button click (you can replace this with note addition)
        replay(coords);
    }
    function playmusic_all(){
@@ -179,15 +184,9 @@ Music notes:
         if(y <= 250) {
             var audio = new Audio('./sounds/e4.mp3');
         }
-        // else if (y <= 340) {
-        //     var audio = new Audio('./sounds/d4.mp3');
-        // }
-        else if (y <= 390) {
+        else if (y <= 400) {
             var audio = new Audio('./sounds/c4.mp3');
         }
-        // else if (y <= 480) {
-        //     var audio = new Audio('./sounds/b4.mp3');
-        // }
         else if (y <= 550) {
             var audio = new Audio('./sounds/a4.mp3');
         }
@@ -200,9 +199,7 @@ Music notes:
  
    function replay(coords) {
     for(let i = 0; i<coords.length; i++){
-        setTimeout(() => { playsound(coords[i].y); }, (coords[i].x)*6)
+        setTimeout(() => { playsound(coords[i].y); }, (coords[i].x - coords[0].x)*4)
         }
     }  
 </script>
-
- 
